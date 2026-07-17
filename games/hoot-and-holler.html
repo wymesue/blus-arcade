@@ -66,6 +66,9 @@
     width:min(72vw, 280px); height:auto; margin-bottom:8px;
     filter:drop-shadow(0 8px 20px rgba(0,0,0,0.4));
   }
+  .game-logo.small{
+    width:min(38vw, 130px); margin-bottom:4px;
+  }
   .brand{
     font-family:'Baloo 2', sans-serif;
     font-weight:800;
@@ -252,12 +255,6 @@
     padding:14px 16px 16px; margin-bottom:24px; text-align:left;
   }
   .missed-panel .found-title{ margin-bottom:10px; }
-  .giveup-btn{
-    background:none; border:none; color:var(--text-dim);
-    font-family:'Nunito', sans-serif; font-weight:700; font-size:13px;
-    text-decoration:underline; text-underline-offset:3px;
-    margin:18px 0 4px; padding:8px; cursor:pointer;
-  }
 
   .help-btn{
     position:fixed; top:calc(16px + env(safe-area-inset-top)); right:16px; z-index:30;
@@ -332,6 +329,7 @@
 <div class="help-modal hidden" id="menu-modal">
   <div class="help-card menu-card">
     <button class="btn secondary" id="menu-giveup-btn">🏳️ Give Up Round</button>
+    <button class="btn secondary" id="menu-levels-btn">🗺️ Choose a Level</button>
     <button class="btn secondary" id="menu-mainmenu-btn">🏠 Back to Arcade</button>
     <button class="btn ghost" id="menu-close-btn">Cancel</button>
   </div>
@@ -347,7 +345,7 @@
 
 <!-- LEVEL SELECT SCREEN -->
 <div class="screen hidden" id="levels-screen">
-  <div class="owl" style="font-size:40px;">🦉</div>
+  <img class="game-logo small" src="../assets/hoot-and-holler-logo.png" alt="Hoot & Holler">
   <div class="brand" style="font-size:24px; margin-bottom:22px;">Choose a Level</div>
   <div class="level-grid" id="level-grid"></div>
   <button class="btn secondary" id="levels-back-btn" style="margin-top:26px;">Back</button>
@@ -391,7 +389,7 @@
 
 <!-- END SCREEN -->
 <div class="screen hidden" id="end-screen">
-  <div class="owl" id="end-owl">🦉</div>
+  <img class="game-logo small" src="../assets/hoot-and-holler-logo.png" alt="Hoot & Holler">
   <div class="result-line" id="end-headline">Time's up!</div>
   <div class="stars" id="stars">
     <span class="star" data-i="1">★</span><span class="star" data-i="2">★</span><span class="star" data-i="3">★</span>
@@ -402,7 +400,6 @@
     <div class="chip-row" id="all-chips"></div>
   </div>
   <button class="btn" id="again-btn">Play Again</button>
-  <button class="giveup-btn" id="end-levels-btn" style="margin-top:14px;">Choose a level instead</button>
 </div>
 
 <script>
@@ -783,14 +780,13 @@
     ['start-screen','game-screen','end-screen','levels-screen'].forEach(function(s){
       $(s).classList.toggle('hidden', s !== id);
     });
-    $('menu-btn').classList.toggle('hidden', id === 'end-screen' || id === 'levels-screen');
+    $('menu-btn').classList.toggle('hidden', id === 'levels-screen');
   }
 
   $('start-btn').addEventListener('click', function(){ playLevel(1); });
   $('again-btn').addEventListener('click', continueGame);
   $('select-level-btn').addEventListener('click', function(){ renderLevelGrid(); show('levels-screen'); });
   $('levels-back-btn').addEventListener('click', function(){ show('start-screen'); });
-  $('end-levels-btn').addEventListener('click', function(){ renderLevelGrid(); show('levels-screen'); });
   $('help-btn').addEventListener('click', function(){ $('help-modal').classList.remove('hidden'); });
   $('help-close-btn').addEventListener('click', function(){ $('help-modal').classList.add('hidden'); });
   $('shuffle-btn').addEventListener('click', shuffleRack);
@@ -803,6 +799,11 @@
   });
   $('menu-close-btn').addEventListener('click', function(){ $('menu-modal').classList.add('hidden'); });
   $('menu-giveup-btn').addEventListener('click', function(){ $('menu-modal').classList.add('hidden'); endRound(); });
+  $('menu-levels-btn').addEventListener('click', function(){
+    $('menu-modal').classList.add('hidden');
+    renderLevelGrid();
+    show('levels-screen');
+  });
   $('menu-mainmenu-btn').addEventListener('click', function(){
     window.location.href = '../index.html';
   });
