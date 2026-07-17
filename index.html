@@ -70,6 +70,10 @@
   }
   .game-tile:active{ transform:translateY(3px); box-shadow:0 1px 0 #14102b, 0 4px 10px rgba(0,0,0,0.3); }
   .game-tile .icon{ font-size:40px; }
+  .game-tile .tile-img{
+    width:64%; aspect-ratio:1; object-fit:contain;
+    border-radius:14px;
+  }
   .game-tile .name{
     font-family:'Baloo 2', sans-serif; font-weight:700; font-size:15px;
     color:var(--text); text-align:center; line-height:1.2;
@@ -88,7 +92,7 @@
 
   <div class="game-grid">
     <a class="game-tile" href="games/hoot-and-holler.html">
-      <span class="icon">🦉</span>
+      <img class="tile-img" src="assets/hoot-and-holler-logo.png" alt="Hoot & Holler">
       <span class="name">Hoot &amp; Holler</span>
     </a>
     <div class="game-tile soon">
