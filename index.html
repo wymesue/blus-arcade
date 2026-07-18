@@ -82,10 +82,19 @@
     background:var(--card); box-shadow:none; opacity:0.45; cursor:default;
   }
   .game-tile.soon .name{ color:var(--text-dim); font-size:13px; }
+  .account-btn{
+    position:fixed; top:calc(16px + env(safe-area-inset-top)); right:16px; z-index:30;
+    background:var(--card-2); color:var(--accent-soft); border:none;
+    font-family:'Nunito', sans-serif; font-weight:800; font-size:13px;
+    padding:9px 16px; border-radius:999px;
+    box-shadow:0 3px 0 #1c1740, 0 6px 14px rgba(0,0,0,0.35);
+    cursor:pointer; max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
 </style>
 </head>
 <body>
 <div class="stars-bg"></div>
+<button class="account-btn" id="account-btn">Sign in</button>
 <div class="wrap">
   <img class="logo" src="assets/blu-logo-full.png" alt="Blu's Arcade">
   <div class="tagline">Pick a game</div>
@@ -101,5 +110,43 @@
     </div>
   </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  "use strict";
+
+  var SUPABASE_URL = 'https://qhagqguctysrbdajoena.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_IQ0H9fQoTmelxlY2KckdKw_e1Gr_8Z9';
+  var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  var btn = document.getElementById('account-btn');
+
+  function renderAccount(session){
+    if(session && session.user){
+      var name = session.user.user_metadata && session.user.user_metadata.full_name;
+      var label = name ? name.split(' ')[0] : (session.user.email || 'Account');
+      btn.textContent = 'Sign out (' + label + ')';
+      btn.onclick = function(){ sb.auth.signOut(); };
+    } else {
+      btn.textContent = 'Sign in';
+      btn.onclick = function(){
+        sb.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo: window.location.origin + '/' }
+        });
+      };
+    }
+  }
+
+  sb.auth.getSession().then(function(res){
+    renderAccount(res.data.session);
+  });
+
+  sb.auth.onAuthStateChange(function(event, session){
+    renderAccount(session);
+  });
+})();
+</script>
 </body>
 </html>
