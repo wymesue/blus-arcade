@@ -300,8 +300,8 @@
   .level-tile{
     aspect-ratio:1; border-radius:14px; border:none;
     background:var(--card-2); color:var(--text);
-    font-family:'Baloo 2', sans-serif; font-weight:700; font-size:17px;
-    display:flex; align-items:center; justify-content:center;
+    font-family:'Baloo 2', sans-serif; font-weight:700; font-size:16px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
     box-shadow:0 3px 0 #1c1740;
     cursor:pointer;
   }
@@ -310,6 +310,10 @@
     background:var(--card); color:var(--text-dim); opacity:0.5;
     box-shadow:none; cursor:default;
   }
+  .level-tile .tile-stars{
+    font-size:9px; letter-spacing:1px; color:var(--text-dim);
+  }
+  .level-tile .tile-stars .star.lit{ color:var(--accent); filter:none; opacity:1; transform:none; }
 </style>
 </head>
 <body>
@@ -430,7 +434,8 @@
     timerId: null,
     audioCtx: null,
     level: 0,
-    highestLevel: 1
+    highestLevel: 1,
+    levelStars: {}
   };
 
   function $(id){ return document.getElementById(id); }
@@ -722,7 +727,24 @@
       (function(n){
         var btn = document.createElement('button');
         btn.className = 'level-tile';
-        btn.textContent = n;
+
+        var num = document.createElement('div');
+        num.textContent = n;
+        btn.appendChild(num);
+
+        var best = state.levelStars[n];
+        if(best !== undefined){
+          var starsRow = document.createElement('div');
+          starsRow.className = 'tile-stars';
+          for(var s = 1; s <= 3; s++){
+            var st = document.createElement('span');
+            st.className = 'star' + (s <= best ? ' lit' : '');
+            st.textContent = '\u2605';
+            starsRow.appendChild(st);
+          }
+          btn.appendChild(starsRow);
+        }
+
         btn.addEventListener('click', function(){ playLevel(n); });
         grid.appendChild(btn);
       })(n);
@@ -741,6 +763,7 @@
     var got = state.found.length;
     var pct = total === 0 ? 0 : (got/total)*100;
     var stars = calcStars(got, total);
+    state.levelStars[state.level] = Math.max(state.levelStars[state.level] || 0, stars);
 
     document.querySelectorAll('#stars .star').forEach(function(el, i){
       el.classList.remove('lit');
